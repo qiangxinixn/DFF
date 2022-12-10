@@ -111,8 +111,6 @@ class DataSet_HDF5(data.Dataset):
         # data shppe: C*H*W
         LR_patch = self.data[index, :, :, :]
         HR_patch = self.target[index, :, :, :]
-        LR_patch = change_img_size(LR_patch, 416)
-        HR_patch = change_img_size(HR_patch, 416)
 
         # we might get out of bounds due to noise
         LR_patch = np.clip(LR_patch, 0, 1)
@@ -129,6 +127,7 @@ class DataSet_HDF5(data.Dataset):
         rotation_degree = random.randint(0, 3)
         LR_patch = np.rot90(LR_patch, rotation_degree, (1, 2))
         HR_patch = np.rot90(HR_patch, rotation_degree, (1, 2))
+        
         return LR_patch.copy(), \
             HR_patch.copy()
 

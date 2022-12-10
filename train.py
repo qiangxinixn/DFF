@@ -23,7 +23,7 @@ parser.add_argument("--start-epoch", type=int, default=1, help="Start epoch from
 parser.add_argument("--lr_decay", type=float, default=0.5, help="Decay scale of learning rate, default=0.5")
 parser.add_argument("--resume", default="1\model.pkl", type=str, help="Path to checkpoint (default: none)")
 parser.add_argument("--isTest", type=bool, default=False, help="Test or not")
-parser.add_argument('--dataset', default="E:\projetct\PSD-Principled-Synthetic-to-Real-Dehazing-Guided-by-Physical-Priors\PSD\data\OTS_ALPHA", type=str, help='Path of the training dataset(.h5)')
+parser.add_argument('--dataset', default="data", type=str, help='Path of the training dataset(.h5)')
 parser.add_argument('--model', default='MSBDN-DFF-v1-1', type=str, help='Import which network')
 parser.add_argument('--name', default='MSBDN-DFF', type=str, help='Filename of the training models')
 parser.add_argument('--gpu_ids', type=str, default='0, 1', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
@@ -127,7 +127,8 @@ opt.seed = random.randint(1, 10000)
 torch.manual_seed(opt.seed)
 torch.cuda.manual_seed(opt.seed)
 
-train_dir = os.path.join(opt.dataset,'haze/OTS/')
+# train_dir = os.path.join(opt.dataset,'haze/OTS/')
+train_dir = opt.dataset
 train_sets = [x for x in sorted(os.listdir(train_dir)) if is_hdf5_file(x)]
 print("===> Loading model {} and criterion".format(opt.model))
 
@@ -171,7 +172,7 @@ for i in range(opt.start_training_step, 3):
         for j in range(len(train_sets)):
             print("Step {}:Training folder is {}".format(i, join(train_dir, train_sets[j])))
             train_set = DataSet_HDF5(join(train_dir, train_sets[j]))
-            trainloader = DataLoader(dataset=train_set, batch_size=opt.batchSize, shuffle=True, num_workers=1)
+            trainloader = DataLoader(dataset=train_set, batch_size=opt.batchSize, shuffle=True)
             avg_psnr = train(trainloader, model, criterion, optimizer, epoch)
             psnr = psnr + avg_psnr
         if epoch % 1 == 0:
