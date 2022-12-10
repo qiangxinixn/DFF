@@ -16,15 +16,15 @@ import torch.nn.functional as F
 
 # Training settings
 parser = argparse.ArgumentParser(description="PyTorch Train")
-parser.add_argument("--batchSize", type=int, default=16, help="Training batch size")
+parser.add_argument("--batchSize", type=int, default=2, help="Training batch size")
 parser.add_argument("--start_training_step", type=int, default=1, help="Training step")
 parser.add_argument("--step", type=int, default=7, help="Change the learning rate for every 30 epochs")
 parser.add_argument("--start-epoch", type=int, default=1, help="Start epoch from 1")
 parser.add_argument("--lr_decay", type=float, default=0.5, help="Decay scale of learning rate, default=0.5")
-parser.add_argument("--resume", default="", type=str, help="Path to checkpoint (default: none)")
+parser.add_argument("--resume", default="1\model.pkl", type=str, help="Path to checkpoint (default: none)")
 parser.add_argument("--isTest", type=bool, default=False, help="Test or not")
-parser.add_argument('--dataset', default="/data/Datasets/RESIDE/RESIDE_HDF5_all/", type=str, help='Path of the training dataset(.h5)')
-parser.add_argument('--model', default='MSBDN-DFF', type=str, help='Import which network')
+parser.add_argument('--dataset', default="E:\projetct\PSD-Principled-Synthetic-to-Real-Dehazing-Guided-by-Physical-Priors\PSD\data\OTS_ALPHA", type=str, help='Path of the training dataset(.h5)')
+parser.add_argument('--model', default='MSBDN-DFF-v1-1', type=str, help='Import which network')
 parser.add_argument('--name', default='MSBDN-DFF', type=str, help='Filename of the training models')
 parser.add_argument('--gpu_ids', type=str, default='0, 1', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
 parser.add_argument("--train_step", type=int, default=1, help="Activated gate module")
@@ -127,7 +127,7 @@ opt.seed = random.randint(1, 10000)
 torch.manual_seed(opt.seed)
 torch.cuda.manual_seed(opt.seed)
 
-train_dir = opt.dataset
+train_dir = os.path.join(opt.dataset,'haze/OTS/')
 train_sets = [x for x in sorted(os.listdir(train_dir)) if is_hdf5_file(x)]
 print("===> Loading model {} and criterion".format(opt.model))
 
@@ -143,9 +143,9 @@ if opt.resume:
         model_dict.update(pretrained_dict)
         model.load_state_dict(model_dict)
         print(get_n_params(model))
-        opt.start_training_step, opt.start_epoch = which_trainingstep_epoch(opt.resume)
-        print(opt.start_training_step)
-        print(opt.start_epoch)
+        # opt.start_training_step, opt.start_epoch = which_trainingstep_epoch(opt.resume)
+        # print(opt.start_training_step)
+        # print(opt.start_epoch)
         mkdir_steptraing()
 else:
     model = Net.make_model(opt)
